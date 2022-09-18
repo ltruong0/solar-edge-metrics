@@ -21,9 +21,6 @@ def setup_logger():
     return logger
 
 
-config = dotenv_values(".env")
-
-
 async def get_power_details(siteId: int, apiKey: str, startTime: str, endTime: str):
     ''''''
     url = f"https://monitoringapi.solaredge.com/site/{siteId}/powerDetails?api_key={apiKey}&startTime={startTime}&endTime={endTime}&meters=PRODUCTION"
@@ -114,4 +111,9 @@ async def main():
     logger.info(json_body)
 if __name__ == "__main__":
     logger = setup_logger()
+
+    logger.info("Loading Config")
+    config = dotenv_values(".env")
+
+    logger.info("Running Main App")
     asyncio.run(main())
