@@ -21,12 +21,17 @@ def setup_logger():
     sh.setFormatter(formatter)
     return logger
 
+
 def parse_args():
-    parser = argparse.ArgumentParser(description='Post Metrics from Solar Edge')
-    parser.add_argument('-hr', '--hour', action='store_true', help='energy produced for last hour')
-    parser.add_argument('-d', '--day', action='store_true', help='energy produced for last day')
+    parser = argparse.ArgumentParser(
+        description='Post Metrics from Solar Edge')
+    parser.add_argument('-hr', '--hour', action='store_true',
+                        help='energy produced for last hour')
+    parser.add_argument('-d', '--day', action='store_true',
+                        help='energy produced for last day')
     args = parser.parse_args()
     return args
+
 
 async def get_power_details(siteId: int, apiKey: str, startTime: str, endTime: str):
     ''''''
@@ -49,6 +54,7 @@ async def get_energy_details(siteId: int, apiKey: str, startTime: str, endTime: 
     response = requests.request("GET", url, headers=headers)
 
     return response
+
 
 async def get_last_day_energy(siteId: int, apiKey: str):
     # get energy for last day
@@ -75,7 +81,7 @@ async def get_last_day_energy(siteId: int, apiKey: str):
     if response.status_code == 200:
         for value in response.json()['energyDetails']['meters'][0]['values']:
             total += value.get('value', 0)
-    
+
     # convert to float
     total = float(total)
 
@@ -142,17 +148,17 @@ async def main():
             }
         )
     if args.day:
-        last_day_energy, day_ago_timestamp = await get_last_day_energy(siteId=siteId,apiKey=apiKey)
+        last_day_energy, day_ago_timestamp = await get_last_day_energy(siteId=siteId, apiKey=apiKey)
         json_body.append(
-        {
-            "measurement": "energyProducedLastDay",
-            # convert to utc
-            "time": day_ago_timestamp.astimezone(pytz.UTC).isoformat(),
-            "fields": {
-                "energy": last_day_energy,
-            },
-        }
-    )
+            {
+                "measurement": "energyProducedLastDay",
+                # convert to utc
+                "time": day_ago_timestamp.astimezone(pytz.UTC).isoformat(),
+                "fields": {
+                    "energy": last_day_energy,
+                },
+            }
+        )
 
     # open connection to influx
     with InfluxDBClient(url=influx_url, token=token, org=org) as client:
