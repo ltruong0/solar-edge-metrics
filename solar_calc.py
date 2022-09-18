@@ -7,6 +7,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 import pytz
 import logging
 
+
 def setup_logger():
     logger = logging.getLogger("solar")
     logger.setLevel(logging.INFO)
@@ -18,6 +19,7 @@ def setup_logger():
     fh.setFormatter(formatter)
     sh.setFormatter(formatter)
     return logger
+
 
 config = dotenv_values(".env")
 
@@ -58,7 +60,8 @@ async def get_last_hour_energy(siteId: int, apiKey: str):
     # subtract timestamp by 1 hour
     hour_ago_timestamp = current_timestamp - timedelta(hours=1)
 
-    logger.info(f"Gathering Energy Data From {hour_ago_timestamp} to {current_timestamp}")
+    logger.info(
+        f"Gathering Energy Data From {hour_ago_timestamp} to {current_timestamp}")
 
     # get energy details
     response = await get_energy_details(siteId=siteId, apiKey=apiKey, startTime=str(hour_ago_timestamp), endTime=str(current_timestamp), timeUnit="HOUR")
@@ -69,7 +72,7 @@ async def get_last_hour_energy(siteId: int, apiKey: str):
     if response.status_code == 200:
         last_hour_energy = response.json(
         )['energyDetails']['meters'][0]['values'][0].get('value', 0)
-    
+
     # return energy info and timestamp
     return last_hour_energy, hour_ago_timestamp
 
