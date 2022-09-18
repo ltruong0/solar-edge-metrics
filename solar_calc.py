@@ -7,7 +7,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 import pytz
 import logging
 import argparse
-
+import os
 
 def setup_logger():
     logger = logging.getLogger("solar")
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     logger.info("Loading Config")
 
     args = parse_args()
-    config = dotenv_values(".env")
+    config = dotenv_values(os.getenv("SLR_CONFIG", ".env"))
 
     logger.info("Running Main App")
     asyncio.run(main())
