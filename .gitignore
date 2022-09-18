@@ -3,3 +3,4 @@ venv
 ignore
 .env
 *.log
+smartmeter
