@@ -77,7 +77,7 @@ async def get_last_hour_energy(siteId: int, apiKey: str):
 async def main():
     ''''''
     # load config
-    logger.info("Loading Configuration")
+    logger.info("Setting Configuration Variables")
     # solaredge
     apiKey = config.get('APIKEY')
     siteId = int(config.get('SITEID'))
@@ -93,7 +93,7 @@ async def main():
     with InfluxDBClient(url=influx_url, token=token, org=org) as client:
         json_body = [
             {
-                "measurement": "energyProduced",
+                "measurement": "energyProducedLastHour",
                 # convert to utc
                 "time": hour_ago_timestamp.astimezone(pytz.UTC).isoformat(),
                 "fields": {
@@ -109,6 +109,7 @@ async def main():
 
     logger.info("Metric Written to InfluxDB")
     logger.info(json_body)
+
 if __name__ == "__main__":
     logger = setup_logger()
 
