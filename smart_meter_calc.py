@@ -1,6 +1,7 @@
 import csv
 import pytz
 import os
+import glob
 import logging
 from datetime import datetime
 from dotenv import dotenv_values
@@ -19,16 +20,9 @@ def setup_logger():
     sh.setFormatter(formatter)
     return logger
 
+def post_metrics_to_influx(token, org, bucket, influx_url, filename):
 
-def main():
-
-    # influx db
-    token = config.get('INFLUX_TOKEN')
-    org = config.get('INFLUX_ORG')
-    bucket = config.get('INFLUX_BUCKET')
-    influx_url = config.get("INFLUX_URL")
-
-    with open('smartmeter/IntervalData.CSV', newline='') as csvfile:
+    with open(filename, newline='') as csvfile:
         csv_reader = csv.DictReader(csvfile, delimiter=',')
         data = [row for row in csv_reader]
 
@@ -78,6 +72,17 @@ def main():
         write_api = client.write_api(write_options=SYNCHRONOUS)
         write_api.write(bucket, org, json_body)
 
+
+
+def main():
+    # influx db
+    token = config.get('INFLUX_TOKEN')
+    org = config.get('INFLUX_ORG')
+    bucket = config.get('INFLUX_BUCKET')
+    influx_url = config.get("INFLUX_URL")
+
+    for filename in glob.glob('./smartmeter/Interval*.CSV'):
+        post_metrics_to_influx(token, org, bucket, influx_url, filename)
 
 if __name__ == '__main__':
     ''''''
