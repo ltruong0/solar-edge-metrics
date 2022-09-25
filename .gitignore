@@ -4,3 +4,5 @@ ignore
 .env
 *.log
 smartmeter
+*.pickle
+credentials.json
