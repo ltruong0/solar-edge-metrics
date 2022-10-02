@@ -28,7 +28,7 @@ def gmail_authenticate():
     creds = None
     # the file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first time
-    pickle_file = os.getenv('TKN_PICKLE', 'token.picke')
+    pickle_file = os.getenv('TKN_PICKLE', 'token.pickle')
     if os.path.exists(pickle_file):
         with open(pickle_file, "rb") as token:
             creds = pickle.load(token)
