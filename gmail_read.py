@@ -4,6 +4,7 @@ import pickle
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
 # for encoding/decoding messages in base64
 from base64 import urlsafe_b64decode
 import logging
@@ -63,8 +64,13 @@ def search_messages(service, query):
 def main():
 
     # authenticate with gmail
-    service = gmail_authenticate()
-
+    try:
+        service = gmail_authenticate()
+    except RefreshError:
+        if os.path.exists("token.pickle"):
+            os.remove("token.pickle")
+        service = gmail_authenticate()
+        
     # search for messages that are unread
     smart_meter_emails = search_messages(
         service=service, query='subject:Smart Meter Texas – Subscription Report and is:unread')
